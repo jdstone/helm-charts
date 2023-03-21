@@ -2,3 +2,5 @@
 sign: false
 # UID of the GPG key to use
 key: Chart Releaser Test Key
+owner: J.D. Stone
+git-repo: helm-charts
