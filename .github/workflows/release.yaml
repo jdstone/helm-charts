@@ -48,7 +48,7 @@ jobs:
 
       - name: Add dependency chart repos
         run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add jdstone https://charts.jdstone.dev
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.4.0

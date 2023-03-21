@@ -1,0 +1,247 @@
+## @section Common parameters
+
+## @param {string} kubeVersion - Override Kubernetes version
+##
+kubeVersion:
+## @param {string} nameOverride - Partially override `names.fullname`
+## DO NOT set nameOverride and fullnameOverride at the same time.
+##
+nameOverride:
+## @param {string} fullnameOverride - Fully override `names.fullname`
+## DO NOT set nameOverride and fullnameOverride at the same time.
+##
+fullnameOverride:
+## @param {object} commonLabels - Labels to add to all deployed objects
+##
+commonLabels: {}
+
+
+## @section Prometheus SQL Exporter (sql-exporter) configuration
+
+config:
+  ## @param {string} config.scrapeTimeout
+  ## Scrape timeouts ensure that:
+  ##   (i)  scraping completes in reasonable time and
+  ##   (ii) slow queries are canceled early when the database is already under heavy load
+  ## Prometheus informs targets of its own scrape timeout (via the "X-Prometheus-Scrape-Timeout-Seconds" request header)
+  ## so the actual timeout is computed as:
+  ##   min(scrapeTimeout, X-Prometheus-Scrape-Timeout-Seconds - scrapeTimeoutOffset)
+  ##
+  ## If scrapeTimeout <= 0, no timeout is set unless Prometheus provides one.
+  ## Defaults to  10s.
+  ##
+  scrapeTimeout:
+
+  ## @param {string} config.scrapeTimeoutOffset
+  ## Subtracted from Prometheus' scrapeTimeout to give us some headroom and prevent Prometheus from timing out first.
+  ## Must be strictly positive.
+  ## Defaults to 500ms.
+  ##
+  scrapeTimeoutOffset:
+
+  ## @param {string} config.minInterval
+  ## Minimum interval between collector runs.
+  ## Defaults to 0s, collectors are executed on every scrape.
+  ##
+  minInterval:
+
+  ## @param {int} config.maxConnections
+  ## Maximum number of open connections to any one target. Metric queries will run concurrently on multiple connections,
+  ## as will concurrent scrapes.
+  ## If maxConnections <= 0, then there is no limit on the number of open connections.
+  ## Defaults to 3.
+  ##
+  maxConnections:
+
+  ## @param {int} config.maxIdleConnections
+  ## Maximum number of idle connections to any one target. Unless you use very long collection intervals, this should
+  ## always be the same as maxConnections.
+  ## If maxIdleConnections <= 0, no idle connections are retained.
+  ## Default to 3.
+  ##
+  maxIdleConnections:
+
+  ## @param {string} config.maxConnectionLifetime
+  ## Maximum amount of time a connection may be reused to any one target.
+  ## Defaults to infinite, inside the application code.
+  ## Suggested value is 10m.
+  ##
+  maxConnectionLifetime: 10m
+
+  ## @param {string} config.dataSourceName
+  ## Data source name always has a URI schema that matches the driver name. In some cases (e.g. MySQL)
+  ## the schema gets dropped or replaced to match the driver expected DSN format.
+  ## Can be overriden with an environment variable, see `extraEnv` (below).
+  ## For additional information: https://github.com/burningalchemist/sql_exporter/#data-source-names
+  ##
+  dataSourceName:
+
+  ## @param {List} config.collectorNames
+  ## Collectors (referenced by name) to execute on the target.
+  ## Use the example below to create your list of collector(s).
+  ## Example shown below.
+  ##
+  collectorNames:
+    # - pricing_data_freshness
+
+
+## @section Image parameters
+
+## Prometheus SQL Exporter image
+## @param {string} image.registry - Prometheus SQL Exporter image registry
+## @param {string} image.repository - Prometheus SQL Exporter image repository
+## @param {string} image.tag - Prometheus SQL Exporter image tag (immutable tags are recommended)
+## @param {string} image.pullPolicy - Prometheus SQL Exporter image pull policy
+##
+image:
+  ## OPTION 1: You can set the entire image repository in one line below
+  repository: burningalchemist/sql_exporter:latest
+  ## OPTION 2: You can manage a registry with
+  # registry: docker.io
+  # repository: burningalchemist/sql_exporter
+  ## Override the image tag to deploy by setting this variable.
+  ## If no value is set, the chart's appVersion will be used.
+  # tag: 'latest'
+
+  pullPolicy: IfNotPresent
+
+
+## @section Deployment parameters
+
+## @param {integer} containerPort - Override the default port (`networkPort`) used in the container
+##
+containerPort:
+## @param {integer} replicaCount - Number of sql-exporter deployment replicas
+##
+replicaCount: 1
+## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+## @param {string} strategy.type - Deployment strategy type
+## @param {Object} strategy.rollingUpdate
+##
+strategy:
+  ## StrategyType
+  ## Can be set to RollingUpdate or Recreate
+  ##
+  type: RollingUpdate
+  rollingUpdate: {}
+## Resource requests and limits
+## ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+## @param {Object} resources.requests - The requested resources for the sql-exporter container
+## @param {Object} resources.limits - The resources limits for the sql-exporter container
+##
+resources:
+  requests: {}
+  limits: {}
+## sql-exporter container liveness and readiness probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+## @param {boolean} livenessProbe.enabled - Enable/disable livenessProbe on sql-exporter container
+## @param {integer} livenessProbe.port - Set port for the TCP socket livenessProbe (overrides `networkPort`)
+## @param {integer} livenessProbe.initialDelaySeconds - Initial delay seconds for livenessProbe
+## @param {integer} livenessProbe.periodSeconds - Period seconds for livenessProbe
+## @param {integer} livenessProbe.timeoutSeconds - Timeout seconds for livenessProbe
+## @param {integer} livenessProbe.successThreshold - Success threshold for livenessProbe
+## @param {integer} livenessProbe.failureThreshold - Failure threshold for livenessProbe
+##
+livenessProbe:
+  enabled: true
+  port:
+  initialDelaySeconds: 30
+  periodSeconds:
+  timeoutSeconds:
+  successThreshold:
+  failureThreshold:
+## @param {Object} customLivenessProbe - Custom livenessProbe that overrides the default one
+##
+customLivenessProbe: {}
+## @param {boolean} readinessProbeEnabled - Enable/disable the readinessProbe
+##
+readinessProbeEnabled: false
+## @param {Object} readinessProbe - Set a readinessProbe
+##
+readinessProbe: {}
+
+## @param {List} extraEnv - Set additional environment variables
+## Remove the square brackts after 'extraEnv:'.
+##
+extraEnv: []
+  # - name: EXAMPLE
+  #   value: "example"
+  # - name: EXAMPLE_FROM_SECRET
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: my-var
+  #       key: my-key
+
+## @param {List} extraVolumeMounts - Specify additional volume mounts
+## Remove the square brackts after 'extraVolumeMounts:'.
+##
+extraVolumeMounts: []
+  # - name: example-volume
+  #   mountPath: /example-path
+
+## @param {List} extraVolumes - Specify additional volumes
+## Remove the square brackts after 'extraVolumes:'.
+##
+extraVolumes: []
+  # - name: example-volume
+  #   configMap:
+  #     name: example-conf
+
+
+## @section Network/service related parameters
+
+## @param {integer} networkPort - Set the port to be used across the sql-exporter container, livenessProbe, and service
+## ATTENTION: 9399 is the default port used by sql-exporter; it cannot be changed unless you recompile sql-exporter.
+## ONLY set this if you have recompiled sql-exporter to use a different port.
+##
+networkPort:
+## Service parameters
+## ref: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+## @param {integer} service.port - Override the default port (9399 or `networkPort`, if set) used in the service
+## @param {integer} service.targetPort - Override the default (9399 or `networkPort`, if set) used in the service
+## @param {string} service.type - Set the service type
+## @param {integer} service.nodePort - Set the node port
+##
+service:
+  port:
+  targetPort:
+  ## ServiceType
+  ## Can be set to ClusterIP, NodePort, LoadBalancer, or ExternalName
+  ## Defaults to ClusterIP
+  ##
+  type: ClusterIP
+  ## Service Node Port
+  ## Only usable if type is set to 'NodePort'
+  ##
+  nodePort: 30000
+
+
+## @section Collector definitions (aka Collectors)
+
+## ref: https://github.com/burningalchemist/sql_exporter#collectors
+## @param {string} collectorDefs
+## A collector is a named set of related metrics that are collected together. It can be referenced by name, possibly
+## along with other collectors.
+## NOTE: `collectorDefs` must be a string so you have to add a | after collectorDefs:
+## Example shown below.
+##
+collectorDefs:
+  # # This collector will be referenced in the exporter configuration as `pricing_data_freshness`.
+  # - collector_name: pricing_data_freshness
+
+  #   # A Prometheus metric with (optional) additional labels, value and labels populated from one query.
+  #   metrics:
+  #     - metric_name: pricing_update_time
+  #       type: gauge
+  #       help: 'Time when prices for a market were last updated.'
+  #       key_labels:
+  #         # Populated from the `market` column of each row.
+  #         - Market
+  #       static_labels:
+  #         # Arbitrary key/value pair
+  #         portfolio: income
+  #       values: [LastUpdateTime]
+  #       query: |
+  #         SELECT Market, max(UpdateTime) AS LastUpdateTime
+  #         FROM MarketPrices
+  #         GROUP BY Market

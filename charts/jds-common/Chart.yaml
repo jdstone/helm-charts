@@ -1,6 +1,6 @@
 apiVersion: v2
 name: jds-common
-version: 0.1.0
+version: 0.0.1
 description: A Library Helm Chart for grouping common logic between J.D. Stone charts. This chart is not deployable by itself.
 type: library
 keywords:
@@ -8,9 +8,9 @@ keywords:
   - helper
   - template
   - function
-home: https://github.com/jdstone
+home: https://charts.jdstone.dev
 maintainers:
 - name: J.D. Stone
   email: jdstone1+helm@gmail.com
 sources:
-- https://github.com/jdstone
+- https://github.com/jdstone/helm-charts

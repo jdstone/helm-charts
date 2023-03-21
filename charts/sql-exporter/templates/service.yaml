@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ include "jdscommon.names.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "jdscommon.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "jdscommon.tplValues.render" ( dict "value" .Values.commonLabels "scope" $ ) | nindent 4 }}
+    {{- end }}
+spec:
+  ports:
+  - name: {{ include "jdscommon.names.fullname" . }}
+    port: {{ default 9399 (default .Values.networkPort .Values.service.port) }}
+    targetPort: {{ default 9399 (default .Values.networkPort .Values.service.targetPort) }}
+    {{- if eq .Values.service.type "NodePort" }}{{ print "nodePort:" | nindent 4 }} {{ required "A valid .Values.service.nodePort entry required!" .Values.service.nodePort }}{{ end }}
+    protocol: TCP
+  selector:
+    app: {{ include "jdscommon.names.fullname" . }}
+  type: {{ default "ClusterIP" .Values.service.type }}
