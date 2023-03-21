@@ -1,16 +1,16 @@
 kind: Deployment
-apiVersion: {{ include "jdscommon.capabilities.deployment.apiVersion" . }}
+apiVersion: {{ include "jds-common.capabilities.deployment.apiVersion" . }}
 metadata:
-  name: {{ include "jdscommon.names.fullname" . }}
+  name: {{ include "jds-common.names.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
-  labels: {{- include "jdscommon.labels.standard" . | nindent 4 }}
+  labels: {{- include "jds-common.labels.standard" . | nindent 4 }}
     {{- if .Values.commonLabels }}
-    {{- include "jdscommon.tplValues.render" ( dict "value" .Values.commonLabels "scope" $ ) | nindent 4 }}
+    {{- include "jdsjds-commoncommon.tplValues.render" ( dict "value" .Values.commonLabels "scope" $ ) | nindent 4 }}
     {{- end }}
 spec:
   selector:
     matchLabels:
-      app: {{ include "jdscommon.names.fullname" . }}
+      app: {{ include "jds-common.names.fullname" . }}
   replicas: {{ .Values.replicaCount }}
   {{- if .Values.strategy }}
   strategy: {{- toYaml .Values.strategy | nindent 4 }}
@@ -18,12 +18,12 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "jdscommon.names.fullname" . }}
+        app: {{ include "jds-common.names.fullname" . }}
     spec:
       volumes:
         - name: sql-exporter-config
           configMap:
-            name: {{ printf "%s-config" (include "jdscommon.names.fullname" .) }}
+            name: {{ printf "%s-config" (include "jds-common.names.fullname" .) }}
           {{- if .Values.extraVolumes }}
             {{- toYaml .Values.extraVolumes | nindent 8 }}
           {{- end }}
