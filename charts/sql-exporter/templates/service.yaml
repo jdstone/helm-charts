@@ -3,15 +3,22 @@ apiVersion: v1
 metadata:
   name: {{ include "jds-common.names.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
+{{- if .Values.service.annotations }}
+  annotations:
+{{ toYaml .Values.service.annotations | indent 4 }}
+{{- end }}
   labels: {{- include "jds-common.labels.standard" . | nindent 4 }}
     {{- if .Values.commonLabels }}
     {{- include "jds-common.tplValues.render" ( dict "value" .Values.commonLabels "scope" $ ) | nindent 4 }}
     {{- end }}
+{{- if .Values.service.labels }}
+{{ toYaml .Values.service.labels | indent 4 }}
+{{- end }}
 spec:
   ports:
   - name: {{ include "jds-common.names.fullname" . }}
-    port: {{ default 9399 (default .Values.networkPort .Values.service.port) }}
-    targetPort: {{ default 9399 (default .Values.networkPort .Values.service.targetPort) }}
+    port: 9399
+    targetPort: {{ default 9399 .Values.service.targetPort }}
     {{- if eq .Values.service.type "NodePort" }}{{ print "nodePort:" | nindent 4 }} {{ required "A valid .Values.service.nodePort entry required!" .Values.service.nodePort }}{{ end }}
     protocol: TCP
   selector:

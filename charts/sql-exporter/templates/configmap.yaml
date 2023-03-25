@@ -1,12 +1,19 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: {{ printf "%s-config" (include "jds-common.names.fullname" .) }}
+  name: {{ include "jds-common.names.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
+  annotations:
+{{- if .Values.config.annotations }}
+{{ toYaml .Values.config.annotations | indent 4 }}
+{{- end }}
   labels: {{- include "jds-common.labels.standard" . | nindent 4 }}
     {{- if .Values.commonLabels }}
     {{- include "jds-common.tplValues.render" ( dict "value" .Values.commonLabels "scope" $ ) | nindent 4 }}
     {{- end }}
+{{- if .Values.config.labels }}
+{{ toYaml .Values.config.labels | indent 4 }}
+{{- end }}
 data:
   sql_exporter.yml: |
 {{- $root := . }}
