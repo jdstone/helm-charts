@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -24,7 +24,7 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Install Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v3
         with:
           version: v3.8.1
 
@@ -48,10 +48,10 @@ jobs:
 
       - name: Add dependency chart repos
         run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add jdstone https://charts.jdstone.dev
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.4.0
+        uses: helm/chart-releaser-action@v1.5.0
         with:
           charts_dir: charts
           config: cr.yaml
