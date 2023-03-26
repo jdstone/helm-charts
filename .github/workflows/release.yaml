@@ -33,9 +33,7 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
-
-      - name: Set GPG read input location
-        run: export GPG_TTY=$(tty)
+          fingerprint: ${{ secrets.GPG_KEY_ID }}
 
       - name: Export GPG key to legacy format
         run: gpg --export-secret-keys > ~/.gnupg/pubring.gpg
