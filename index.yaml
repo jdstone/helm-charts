@@ -2,6 +2,28 @@ apiVersion: v1
 entries:
   jds-common:
   - apiVersion: v2
+    created: "2023-03-28T16:04:05.128576902Z"
+    description: A Library Helm Chart for grouping common logic between J.D. Stone
+      charts. This chart is not deployable by itself.
+    digest: c325a2a810db3e31b04dd510f2354ecc0a65b1382f58aaff702dec872ee2e6f7
+    home: https://github.com/jdstone/helm-charts
+    keywords:
+    - common
+    - helper
+    - template
+    - function
+    - jdstone
+    maintainers:
+    - email: jdstone1+helm@gmail.com
+      name: jdstone
+    name: jds-common
+    sources:
+    - https://github.com/jdstone/helm-charts
+    type: library
+    urls:
+    - https://github.com/jdstone/helm-charts/releases/download/jds-common-0.1.2/jds-common-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     created: "2023-03-25T16:54:33.681304377-07:00"
     description: A Library Helm Chart for grouping common logic between J.D. Stone
       charts. This chart is not deployable by itself.
@@ -23,4 +45,4 @@ entries:
     urls:
     - jds-common-0.1.1.tgz
     version: 0.1.1
-generated: "2023-03-25T16:54:33.673697056-07:00"
+generated: "2023-03-28T16:04:05.128584502Z"
