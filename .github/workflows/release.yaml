@@ -43,8 +43,5 @@ jobs:
           charts_dir: charts
           config: cr.yaml
         env:
-          CR_KEY: J.D. Stone <jdstone1@gmail.com>
-          CR_KEYRING: keyring.gpg
           CR_PASSPHRASE_FILE: passphrase-file.txt
-          CR_SIGN: true
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

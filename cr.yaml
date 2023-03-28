@@ -2,5 +2,6 @@
 sign: true
 # UID of the GPG key to use
 key: jdstone1@gmail.com
+keyring: keyring.gpg
 owner: J.D. Stone
 git-repo: helm-charts
