@@ -2,7 +2,7 @@
 
 Example project to demo testing and hosting a chart repository with GitHub Pages and Actions.
 
-## How to Use Our Charts
+## How to Use My Charts
 
 * Add this repository to your Helm:
 ```helm repo add jdstone https://charts.jdstone.dev```
