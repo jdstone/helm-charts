@@ -43,7 +43,7 @@ entries:
     - https://github.com/jdstone/helm-charts
     type: library
     urls:
-    - jds-common-0.1.1.tgz
+    - https://github.com/jdstone/helm-charts/releases/download/jds-common-0.1.1/jds-common-0.1.1.tgz
     version: 0.1.1
   sql-exporter:
   - apiVersion: v2
