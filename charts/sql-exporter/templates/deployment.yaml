@@ -9,7 +9,7 @@ metadata:
 {{- end }}
   labels: {{- include "jds-common.labels.standard" . | nindent 4 }}
     {{- if .Values.commonLabels }}
-    {{- include "jds-common.tplValues.render" ( dict "value" .Values.commonLabels "scope" $ ) | nindent 4 }}
+      {{- include "jds-common.tplValues.render" ( dict "value" .Values.commonLabels "scope" $ ) | nindent 4 }}
     {{- end }}
 {{- if .Values.labels }}
 {{ toYaml .Values.labels | indent 4 }}
@@ -20,43 +20,65 @@ spec:
       app: {{ include "jds-common.names.fullname" . }}
   replicas: {{ .Values.replicaCount }}
   {{- if .Values.strategy }}
-  strategy: {{- toYaml .Values.strategy | nindent 4 }}
-  {{- if .Values.strategy.rollingUpdate }}
-    {{- toYaml .Values.strategy.rollingUpdate | nindent 4 }}
-  {{- end }}
+  strategy:
+    type: {{ .Values.strategy.type }}
+    {{- if eq .Values.strategy.type "RollingUpdate" }}
+      {{- if .Values.strategy.rollingUpdate }}
+    rollingUpdate: {{- toYaml .Values.strategy.rollingUpdate | nindent 6 }}
+      {{- end }}
+    {{- end }}
   {{- end }}
   template:
     metadata:
       labels:
         app: {{ include "jds-common.names.fullname" . }}
     spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
+      {{- if .Values.config.createK8sSecretConfig }}
+        - name: sql-exporter-config
+          secret:
+            secretName: {{ include "jds-common.names.fullname" . }}
+      {{- end }}
+      {{- if not .Values.config.createK8sSecretConfig }}
         - name: sql-exporter-config
           configMap:
             name: {{ include "jds-common.names.fullname" . }}
-          {{- if .Values.extraVolumes }}
-            {{- toYaml .Values.extraVolumes | nindent 8 }}
+      {{- end }}
+      {{- if .Values.collectorDefFiles }}
+        - name: collectors-config
+          configMap:
+            name: {{ print (include "jds-common.names.fullname" .) "-collectors" }}
+      {{- end }}
+          {{- with .Values.extraVolumes }}
+            {{- toYaml . | nindent 8 }}
           {{- end }}
       containers:
-        - name: sql-exporter
+        - name: {{ .Chart.Name }}
           {{- with .Values.image }}
-          image: "{{- if contains ":" .repository -}}{{ .repository }}{{- else -}}{{- if .registry -}}{{ .registry }}/{{- end -}}{{ .repository }}:{{ default $.Chart.AppVersion .tag }}{{- end -}}"
+          image: "{{- if .repository -}}{{ .repository }}{{- else -}}{{- if .registry -}}{{ .registry }}{{- end -}}{{- end -}}:{{ default $.Chart.AppVersion .tag }}"
           imagePullPolicy: {{ .pullPolicy | quote }}
           {{- end }}
           env:
             - name: SQLEXPORTER_CONFIG
-              value: "/sql-exporter/sql_exporter.yml"
-            {{- if .Values.extraEnv }}
-              {{- toYaml .Values.extraEnv | nindent 12 }}
+              value: "/etc/sql_exporter/sql_exporter.yml"
+            {{- with .Values.extraEnv }}
+              {{- toYaml . | nindent 12 }}
             {{- end }}
           ports:
-            - containerPort: 9399
-          {{- if .Values.resources }}
-          resources: {{- toYaml .Values.resources | nindent 12 }}
+            - name: http
+              containerPort: 9399
+              protocol: TCP
+          {{- with .Values.resources }}
+          resources: {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if .Values.livenessProbe.enabled }}
+          {{- if and .Values.livenessProbe.enabled (not .Values.customLivenessProbe) }}
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /healthz
               port: 9399
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
@@ -66,12 +88,28 @@ spec:
           {{- else if .Values.customLivenessProbe }}
           livenessProbe: {{- toYaml .Values.customLivenessProbe | nindent 12 }}
           {{- end }}
-          {{- if .Values.readinessProbeEnabled }}
-          readinessProbe: {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- if and .Values.readinessProbe.enabled (not .Values.customReadinessProbe) }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 9399
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          {{- else if .Values.customReadinessProbe }}
+          readinessProbe: {{- toYaml .Values.customReadinessProbe | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: sql-exporter-config
-              mountPath: /sql-exporter
-            {{- if .Values.extraVolumeMounts }}
-              {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
+            - mountPath: /etc/sql_exporter/
+              name: sql-exporter-config
+              readOnly: true
+          {{- if .Values.collectorDefFiles }}
+            - mountPath: /etc/sql_exporter/collectors/
+              name: collectors-config
+              readOnly: true
+          {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+              {{- toYaml . | nindent 12 }}
             {{- end }}

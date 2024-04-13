@@ -1,0 +1,23 @@
+{{- if .Values.collectorDefFiles }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "jds-common.names.fullname" . }}-collectors
+  namespace: {{ .Release.Namespace | quote }}
+{{- if .Values.config.annotations }}
+  annotations:
+{{ toYaml .Values.config.annotations | indent 4 }}
+{{- end }}
+  labels: {{- include "jds-common.labels.standard" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "jds-common.tplValues.render" ( dict "value" .Values.commonLabels "scope" $ ) | nindent 4 }}
+    {{- end }}
+{{- if .Values.config.labels }}
+{{ toYaml .Values.config.labels | indent 4 }}
+{{- end }}
+data:
+  {{- range $k, $v := .Values.collectorDefFiles }}
+  {{ $k }}: |-
+    {{- toYaml $v | nindent 4}}
+  {{- end}}
+{{- end }}

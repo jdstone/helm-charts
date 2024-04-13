@@ -2,17 +2,17 @@
 
 ## @param {string} kubeVersion - Override Kubernetes version
 ##
-kubeVersion:
+kubeVersion: ""
 
 ## @param {string} nameOverride - Partially override `names.fullname`
 ## DO NOT set nameOverride and fullnameOverride at the same time.
 ##
-nameOverride:
+nameOverride: ""
 
 ## @param {string} fullnameOverride - Fully override `names.fullname`
 ## DO NOT set nameOverride and fullnameOverride at the same time.
 ##
-fullnameOverride:
+fullnameOverride: ""
 
 ## @param {object} commonLabels - Labels to add to all deployed objects
 ## Remove the curly braces after 'commonLabels:'.
@@ -23,6 +23,13 @@ commonLabels: {}
 ## @section Prometheus SQL Exporter (sql-exporter) configuration
 
 config:
+  ## @param {boolean} config.createK8sSecretConfig
+  ## Create a K8s Secret or ConfigMap for the application config
+  ## If set to 'true', a K8s Secret will be created.
+  ## If set to 'false', a K8s ConfigMap will be created.
+  ##
+  createK8sSecretConfig: true
+
   ## @param {string} config.scrapeTimeout
   ## Scrape timeouts ensure that:
   ##   (i)  scraping completes in reasonable time and
@@ -49,7 +56,7 @@ config:
   ##
   minInterval: 0s
 
-  ## @param {int} config.maxConnections
+  ## @param {integer} config.maxConnections
   ## Maximum number of open connections to any one target. Metric queries will run concurrently on multiple connections,
   ## as will concurrent scrapes.
   ## If maxConnections <= 0, then there is no limit on the number of open connections.
@@ -57,7 +64,7 @@ config:
   ##
   maxConnections: 3
 
-  ## @param {int} config.maxIdleConnections
+  ## @param {integer} config.maxIdleConnections
   ## Maximum number of idle connections to any one target. Unless you use very long collection intervals, this should
   ## always be the same as maxConnections.
   ## If maxIdleConnections <= 0, no idle connections are retained.
@@ -77,24 +84,36 @@ config:
   ## the schema gets dropped or replaced to match the driver expected DSN format.
   ## Can be overriden with a container environment variable, SQLEXPORTER_TARGET_DSN, using `extraEnv` (below).
   ## SQLEXPORTER_TARGET_DSN info: https://github.com/burningalchemist/sql_exporter/issues/186
-  ## For additional information: https://github.com/burningalchemist/sql_exporter/#data-source-names
+  ## For additional information: https://github.com/burningalchemist/sql_exporter/#data-source-names-dsn
   ##
   dataSourceName:
 
-  ## @param {List} config.collectorNames
+  ## @param {string} config.awsSecretName
+  ## AWS Secrets Manager secret
+  ## For additional information: https://github.com/burningalchemist/sql_exporter/#using-aws-secrets-manager
+  ##
+  awsSecretName: ""
+
+  ## @param {list} config.collectorNames
   ## Collectors (referenced by name) to execute on the target.
   ## Use the example below to create your list of collector(s).
-  ## EXAMPLE shown below.
   ##
   collectorNames:
     - pricing_data_freshness
 
-  ## @param {object} annotations - Annotations to add to the ConfigMap
+  ## @param {list} config.collectorFiles
+  ## collectorFiles are filenames that sql-exporter will look for and load.
+  ## Glob patterns are supported (see <https://pkg.go.dev/path/filepath#Match> for syntax).
+  ##
+  collectorFiles:
+    - "*.collector.yml"
+
+  ## @param {object} config.annotations - Annotations to add to the Secret or ConfigMap
   ## Remove the curly braces after 'annotations:'.
   ##
   annotations: {}
 
-  ## @param {object} labels - Labels to add to the ConfigMap
+  ## @param {object} config.labels - Labels to add to the Secret or ConfigMap
   ## Remove the curly braces after 'labels:'.
   ##
   labels: {}
@@ -103,22 +122,28 @@ config:
 ## @section Image parameters
 
 ## Prometheus SQL Exporter image
-## @param {string} image.registry - Prometheus SQL Exporter image registry
 ## @param {string} image.repository - Prometheus SQL Exporter image repository
-## @param {string} image.tag - Prometheus SQL Exporter image tag (immutable tags are recommended)
-## @param {string} image.pullPolicy - Prometheus SQL Exporter image pull policy
+## @param {string} image.registry - Prometheus SQL Exporter image registry
 ##
 image:
-  ## OPTION 1: You can set the entire image repository in one line below
-  repository: burningalchemist/sql_exporter:latest
-  ## OPTION 2: You can manage a registry with
-  # registry: docker.io
-  # repository: burningalchemist/sql_exporter
+  ## Do NOT set an image tag after the repository, use 'tag' below.
+  ##
+  repository: burningalchemist/sql_exporter
+
+  ## @param {string} image.tag - Prometheus SQL Exporter image tag (immutable tags are recommended)
   ## Override the image tag to deploy by setting this variable.
   ## If no value is set, the chart's appVersion will be used.
-  # tag: 'latest'
+  ##
+  tag: ""
 
+  ## @param {string} image.pullPolicy - Prometheus SQL Exporter image pull policy
+  ##
   pullPolicy: IfNotPresent
+
+  ## @param {list} image.pullSecrets - List image pull secrets
+  ## You must manually create your own secret to use this.
+  ##
+  pullSecrets: []
 
 
 ## @section Deployment parameters
@@ -129,25 +154,27 @@ replicaCount: 1
 
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
 ## @param {string} strategy.type - Deployment strategy type
-## @param {Object} strategy.rollingUpdate
+## @param {object} strategy.rollingUpdate
 ##
 strategy:
   ## StrategyType
   ## Can be set to RollingUpdate or Recreate
+  ## Remove the curly braces after 'rollingUpdate:'.
   ##
   type: RollingUpdate
   rollingUpdate: {}
 
 ## Resource requests and limits
 ## ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-## @param {Object} resources.requests - The requested resources for the sql-exporter container
-## @param {Object} resources.limits - The resources limits for the sql-exporter container
+## @param {object} resources.requests - The requested resources for the sql-exporter container
+## @param {object} resources.limits - The resources limits for the sql-exporter container
+## Remove the curly braces after 'requests/limits:'.
 ##
 resources:
-  requests: {}
-  limits: {}
+  # requests: {}
+  # limits: {}
 
-## sql-exporter container liveness and readiness probes
+## sql-exporter container liveness probe
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 ## @param {boolean} livenessProbe.enabled - Enable/disable livenessProbe on sql-exporter container
 ## @param {integer} livenessProbe.initialDelaySeconds - Initial delay seconds for livenessProbe
@@ -164,21 +191,34 @@ livenessProbe:
   successThreshold:
   failureThreshold:
 
-## @param {Object} customLivenessProbe - Custom livenessProbe that overrides the default one
+## @param {object} customLivenessProbe - Custom livenessProbe that overrides the default one
 ##
 customLivenessProbe: {}
 
-## @param {boolean} readinessProbeEnabled - Enable/disable the readinessProbe
+## sql-exporter container readiness probe
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+## @param {boolean} readinessProbe.enabled - Enable/disable readinessProbe on sql-exporter container
+## @param {integer} readinessProbe.initialDelaySeconds - Initial delay seconds for readinessProbe
+## @param {integer} readinessProbe.periodSeconds - Period seconds for readinessProbe
+## @param {integer} readinessProbe.timeoutSeconds - Timeout seconds for readinessProbe
+## @param {integer} readinessProbe.successThreshold - Success threshold for readinessProbe
+## @param {integer} readinessProbe.failureThreshold - Failure threshold for readinessProbe
 ##
-readinessProbeEnabled: false
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds:
+  timeoutSeconds:
+  successThreshold:
+  failureThreshold:
 
-## @param {Object} readinessProbe - Set a readinessProbe
+## @param {object} customReadinessProbe - Custom readinessProbe that overrides the default one
 ##
-readinessProbe: {}
+customReadinessProbe: {}
 
-## @param {List} extraEnv - Set additional environment variables
+## @param {list} extraEnv - Set additional environment variables
 ## Remove the square brackets after 'extraEnv:'.
-## Secrets must be manually created in the namespace
+## Any secrets used below must be manually created in the namespace
 ##
 extraEnv: []
   # - name: SQLEXPORTER_TARGET_DSN
@@ -186,17 +226,17 @@ extraEnv: []
   # - name: SQLEXPORTER_TARGET_DSN
   #   valueFrom:
   #     secretKeyRef:
-  #       name: sql-exporter-dsn
   #       key: DSN
+  #       name: sql-exporter-dsn
 
-## @param {List} extraVolumeMounts - Specify additional volume mounts
+## @param {list} extraVolumeMounts - Specify additional volume mounts
 ## Remove the square brackets after 'extraVolumeMounts:'.
 ##
 extraVolumeMounts: []
-  # - name: example-volume
-  #   mountPath: /example-path
+  # - mountPath: /example-path
+  #   name: example-volume
 
-## @param {List} extraVolumes - Specify additional volumes
+## @param {list} extraVolumes - Specify additional volumes
 ## Remove the square brackets after 'extraVolumes:'.
 ##
 extraVolumes: []
@@ -218,38 +258,43 @@ labels: {}
 ## @section Service parameters
 
 ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
-## @param {integer} service.targetPort - Set the target port
-## @param {string} service.type - Set the service type
-## @param {integer} service.nodePort - Set the node port
-## @param {object} annotations - Annotations to add to the Service
-## @param {object} labels - Labels to add to the Service
 ##
 service:
+  ## @param {integer} service.targetPort - Set the target port
+  ##
   targetPort:
+
   ## ServiceType
+  ## @param {string} service.type - Set the service type
   ## Can be set to ClusterIP, NodePort, or LoadBalancer
   ##
   type: ClusterIP
+
   ## Service Node Port
+  ## @param {integer} service.nodePort - Set the node port
   ## Only usable if type is set to 'NodePort'
   ##
   nodePort:
-  ## Remove the curly braces after 'annotations:'.
+
+  ## @param {object} service.annotations - Annotations to add to the service
+  ## Remove the curly braces after 'service.annotations:'.
   ##
   annotations: {}
-  ## Remove the curly braces after 'labels:'.
+
+  ## @param {object} service.labels - Labels to add to the service
+  ## Remove the curly braces after 'service.labels:'.
   ##
   labels: {}
 
 
 ## @section Collector definitions (aka Collectors)
 
-## ref: https://github.com/burningalchemist/sql_exporter#collectors
+## ref: https://github.com/burningalchemist/sql_exporter/#collectors
+## ref: https://github.com/burningalchemist/sql_exporter/blob/master/documentation/sql_exporter.yml
 ## @param {string} collectorDefs
 ## A collector is a named set of related metrics that are collected together. It can be referenced by name, possibly
 ## along with other collectors.
 ## NOTE: `collectorDefs` must be a string so you have to add a | after collectorDefs:
-## EXAMPLE shown below.
 ##
 collectorDefs: |
   # This collector will be referenced in the exporter configuration as `pricing_data_freshness`.
@@ -267,7 +312,34 @@ collectorDefs: |
           # Arbitrary key/value pair
           portfolio: income
         values: [LastUpdateTime]
+        query_ref: pricing_update_time
+    queries:
+      - query_name: pricing_update_time
         query: |
           SELECT Market, max(UpdateTime) AS LastUpdateTime
           FROM MarketPrices
           GROUP BY Market
+
+
+## @section Collector definition files
+
+## ref: https://github.com/burningalchemist/sql_exporter/#collectors
+## ref: https://github.com/burningalchemist/sql_exporter/blob/master/documentation/sql_exporter.yml
+## @param {list} collectorDefFiles
+## A collector is a named set of related metrics that are collected together. It can be referenced by name, possibly
+## along with other collectors.
+##
+collectorDefFiles: []
+  # pricing_data_freshness.collector.yml:
+  #   collector_name: pricing_data_freshness
+  #   metrics:
+  #     - metric_name: mssql_hostname
+  #       type: gauge
+  #       help: 'Database server hostname'
+  #       key_labels:
+  #         # Populated from the `hostname` column of the result.
+  #         - hostname
+  #       # Static value, always set to `1`.
+  #       static_value: 1
+  #       query: |
+  #         SELECT @@SERVERNAME AS hostname
