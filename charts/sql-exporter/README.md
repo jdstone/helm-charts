@@ -48,7 +48,7 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Questions
 
-Create an [issue](https://github.com/jdstone/helm-charts/issues) and I'll do the best I can in helping you out.
+Create an [issue](https://github.com/jdstone/helm-charts/issues) and I'll do the best I can to help you out.
 
 ## Parameters
 
