@@ -47,6 +47,37 @@ entries:
     version: 0.1.1
   sql-exporter:
   - apiVersion: v2
+    appVersion: 0.14.2
+    created: "2024-04-13T20:53:47.953584728Z"
+    dependencies:
+    - name: jds-common
+      repository: https://charts.jdstone.dev
+      tags:
+      - common
+      - helper
+      - template
+      - function
+      - jdstone
+      version: 0.1.2
+    description: A Helm chart for the Prometheus SQL Exporter
+    digest: fde99049c48df80b1b4cbc77c72acd6d7b0518834459a7aa20f7b0e28e28937b
+    home: https://github.com/jdstone/helm-charts
+    keywords:
+    - sql_exporter
+    - prometheus_exporter
+    - prometheus_sql_exporter
+    - jdstone
+    maintainers:
+    - email: jdstone1+helm@gmail.com
+      name: jdstone
+    name: sql-exporter
+    sources:
+    - https://github.com/burningalchemist/sql_exporter
+    type: application
+    urls:
+    - https://github.com/jdstone/helm-charts/releases/download/sql-exporter-0.1.1/sql-exporter-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     appVersion: 0.10.0
     created: "2023-03-29T17:52:20.533991139Z"
     dependencies:
@@ -77,4 +108,4 @@ entries:
     urls:
     - https://github.com/jdstone/helm-charts/releases/download/sql-exporter-0.0.7/sql-exporter-0.0.7.tgz
     version: 0.0.7
-generated: "2023-03-29T17:52:20.533998839Z"
+generated: "2024-04-13T20:53:47.953597341Z"
