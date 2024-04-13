@@ -15,15 +15,15 @@ This chart bootstraps a SQL Exporter deployment on a [Kubernetes](http://kuberne
 
 ## Prerequisites
 
-- Kubernetes 1.14+
-- Helm 3.11.2+
+- Kubernetes v1.14+
+- Helm v3.11.2+
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release`:
+To install the chart with the release name `my-release` and use your values:
 
 ```bash
-$ helm install my-release jdstone/sql-exporter
+$ helm install -f values.yaml my-release jdstone/sql-exporter
 ```
 
 The command deploys SQL Exporter on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -46,6 +46,10 @@ $ helm uninstall -n namespace my-release
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
+## Questions
+
+Create an [issue](https://github.com/jdstone/helm-charts/issues) and I'll do the best I can to help you out.
+
 ## Parameters
 
 
@@ -53,57 +57,67 @@ The command removes all the Kubernetes components associated with the chart and 
 
 | Name               | Type   | Description                           | Default |
 | ------------------ | ------ | ------------------------------------- | ------- |
-| `kubeVersion`      | string | Override Kubernetes version           | `nil`   |
-| `nameOverride`     | string | Partially override names.fullname     | `nil`   |
-| `fullnameOverride` | string | Fully override names.fullname         | `nil`   |
+| `kubeVersion`      | string | Override Kubernetes version           | `""`    |
+| `nameOverride`     | string | Partially override names.fullname     | `""`    |
+| `fullnameOverride` | string | Fully override names.fullname         | `""`    |
 | `commonLabels`     | object | Labels to add to all deployed objects | `{}`    |
 
 
 ### SQL Exporter configuration parameters
 
-| Name                           | Type   | Description                                                                           | Default                      |
-| ------------------------------ | ------ | ------------------------------------------------------------------------------------- | ---------------------------- |
-| `config.scrapeTimeout`         | string | Per-scrape timeout. See values.yaml for more information.                             | `"10s"`                      |
-| `config.scrapeTimeoutOffset`   | string | Subtracted from scrapeTimeout to give headroom & prevent Prometheus from timing out   | `"500ms"`                    |
-| `config.minInterval`           | string | Minimum interval between collector runs                                               | `"0s"`                       |
-| `config.maxConnections`        | int    | Maximum number of open connections to any one target                                  | `3`                          |
-| `config.maxIdleConnections`    | int    | Maximum number of idle connections to any one target                                  | `3`                          |
-| `config.maxConnectionLifetime` | string | Maximum amount of time a connection may be reused to any one target. See values.yaml. | `infinite`                   |
-| `config.dataSourceName`        | string | Database connection source. See values.yaml for more information.                     | `nil`                        |
-| `config.collectorNames`        | list   | Collectors (referenced by name) to execute on the target                              | `["pricing_data_freshness"]` |
-| `config.annotations`           | object | Annotations to add to the ConfigMap                                                   | `{}`                         |
-| `config.labels`                | object | Labels to add to the ConfigMap                                                        | `{}`                         |
-| `collectorDefs`                | string | Collector definitions. See values.yaml for more info.                                 | `"pricing_data_freshness"`   |
+| Name                           | Type    | Description                                                                           | Default                                 |
+| ------------------------------ | ------- | ------------------------------------------------------------------------------------- | --------------------------------------- |
+| `config.createK8sSecretConfig` | boolean | Create a K8s Secret or ConfigMap for the app config. True = Secret, False = ConfigMap | `true`                                  |
+| `config.scrapeTimeout`         | string  | Per-scrape timeout. See values.yaml for more information.                             | `"10s"`                                 |
+| `config.scrapeTimeoutOffset`   | string  | Subtracted from scrapeTimeout to give headroom & prevent Prometheus from timing out   | `"500ms"`                               |
+| `config.minInterval`           | string  | Minimum interval between collector runs                                               | `"0s"`                                  |
+| `config.maxConnections`        | int     | Maximum number of open connections to any one target                                  | `3`                                     |
+| `config.maxIdleConnections`    | int     | Maximum number of idle connections to any one target                                  | `3`                                     |
+| `config.maxConnectionLifetime` | string  | Maximum amount of time a connection may be reused to any one target. See values.yaml. | `infinite`                              |
+| `config.dataSourceName`        | string  | Database Source Name (DSN). See values.yaml for more information.                     | `"sqlserver://user:pass@dbserver:1433"` |
+| `config.awsSecretName`         | string  | Allows the ability to store the DSN in AWS Secrets Manager                            | `""`                                    |
+| `config.collectorNames`        | list    | Collectors (referenced by name) to execute on the target                              | `["pricing_data_freshness"]`            |
+| `config.collectorFiles`        | list    | Collector Files are filenames that sql-exporter will look for and load                | `["*.collector.yml"]`                   |
+| `config.annotations`           | object  | Annotations to add to the Secret or ConfigMap                                         | `{}`                                    |
+| `config.labels`                | object  | Labels to add to the Secret or ConfigMap                                              | `{}`                                    |
+| `collectorDefs`                | string  | Collector definitions. See values.yaml for more info.                                 | `"pricing_data_freshness"`              |
+| `collectorDefFiles`            | list    | Collector definitions, contained in individual files.                                 | `[]`                                    |
 
 
 ### Deployment parameters
 
-| Name                                | Type    | Description                                         | Default                           |
-| ----------------------------------- | ------- | --------------------------------------------------- | --------------------------------- |
-| `image.registry`                    | string  | The Docker image registry                           | `"docker.io"`                     |
-| `image.repository`                  | string  | The Docker image repository                         | `"burningalchemist/sql_exporter"` |
-| `image.tag`                         | string  | The Docker image tag                                | `'latest'`                        |
-| `image.pullPolicy`                  | string  | The Docker image pull policy                        | `"IfNotPresent"`                  |
-| `replicaCount`                      | int     | Number of SQL Exporter replicas to deploy           | `1`                               |
-| `strategy.type`                     | string  | Deployment strategy type                            | `"RollingUpdate"`                 |
-| `strategy.rollingUpdate`            | object  | Strategy "RollingUpdate" parameters                 | `{}`                              |
-| `resources.requests`                | object  | CPU/memory resource requests                        | `{}`                              |
-| `resources.limits`                  | object  | CPU/memory resource limits                          | `{}`                              |
-| `livenessProbe.enabled`             | boolean | Enable/Disable the default tcpSocket livenessProbe  | `true`                            |
-| `livenessProbe.port`                | int     | Default livenessProbe tcpSocket port                | `nil`                             |
-| `livenessProbe.initialDelaySeconds` | int     | Initial delay seconds for livenessProbe             | `30`                              |
-| `livenessProbe.periodSeconds`       | int     | Period seconds for livenessProbe                    | `nil`                             |
-| `livenessProbe.timeoutSeconds`      | int     | Timeout seconds for livenessProbe                   | `nil`                             |
-| `livenessProbe.successThreshold`    | int     | Success threshold for livenessProbe                 | `nil`                             |
-| `livenessProbe.failureThreshold`    | int     | Failure threshold for livenessProbe                 | `nil`                             |
-| `customLivenessProbe`               | object  | Custom livenessProbe that overrides the default one | `{}`                              |
-| `readinessProbeEnabled`             | boolean | Enable the custom readinessProbe                    | `false`                           |
-| `readinessProbe`                    | object  | Container readiness probe                           | `{}`                              |
-| `extraEnv`                          | list    | Container environment variables                     | `{}`                              |
-| `extraVolumeMounts`                 | list    | Container volume mounts                             | `{}`                              |
-| `extraVolumes`                      | list    | Container volumes                                   | `{}`                              |
-| `annotations`                       | object  | Annotations to add to the Deployment                | `{}`                              |
-| `labels`                            | object  | Labels to add to the Deployment                     | `{}`                              |
+| Name                                 | Type    | Description                                            | Default                              |
+| ------------------------------------ | ------- | ------------------------------------------------------ | ------------------------------------ |
+| `image.repository`                   | string  | Image repository                                       | `"burningalchemist/sql_exporter"`    |
+| `image.tag`                          | string  | Image tag                                              | `appVersion` value from `Chart.yaml` |
+| `image.pullPolicy`                   | string  | Image pull policy                                      | `"IfNotPresent"`                     |
+| `image.pullSecrets`                  | list    | Image pull secrets                                     | `[]`                                 |
+| `replicaCount`                       | int     | Number of SQL Exporter replicas to deploy              | `1`                                  |
+| `strategy.type`                      | string  | Deployment strategy type                               | `"RollingUpdate"`                    |
+| `strategy.rollingUpdate`             | object  | Strategy "RollingUpdate" parameters                    | `{}`                                 |
+| `resources.requests`                 | object  | CPU/memory resource requests                           | `{}`                                 |
+| `resources.limits`                   | object  | CPU/memory resource limits                             | `{}`                                 |
+| `livenessProbe.enabled`              | boolean | Enable/Disable the default http livenessProbe          | `true`                               |
+| `livenessProbe.port`                 | int     | Default livenessProbe http port                        | `nil`                                |
+| `livenessProbe.initialDelaySeconds`  | int     | Initial delay seconds for livenessProbe                | `30`                                 |
+| `livenessProbe.periodSeconds`        | int     | Period seconds for livenessProbe                       | `nil`                                |
+| `livenessProbe.timeoutSeconds`       | int     | Timeout seconds for livenessProbe                      | `nil`                                |
+| `livenessProbe.successThreshold`     | int     | Success threshold for livenessProbe                    | `nil`                                |
+| `livenessProbe.failureThreshold`     | int     | Failure threshold for livenessProbe                    | `nil`                                |
+| `readinessProbe.enabled`             | boolean | Enable/Disable the default http readinessProbe         | `true`                               |
+| `readinessProbe.port`                | int     | Default readinessProbe http port                       | `nil`                                |
+| `readinessProbe.initialDelaySeconds` | int     | Initial delay seconds for readinessProbe               | `30`                                 |
+| `readinessProbe.periodSeconds`       | int     | Period seconds for readinessProbe                      | `nil`                                |
+| `readinessProbe.timeoutSeconds`      | int     | Timeout seconds for readinessProbe                     | `nil`                                |
+| `readinessProbe.successThreshold`    | int     | Success threshold for readinessProbe                   | `nil`                                |
+| `readinessProbe.failureThreshold`    | int     | Failure threshold for readinessProbe                   | `nil`                                |
+| `customLivenessProbe`                | object  | Custom livenessProbe that overrides the default probe  | `{}`                                 |
+| `customReadinessProbe`               | object  | Custom readinessProbe that overrides the default probe | `{}`                                 |
+| `extraEnv`                           | list    | Container environment variables                        | `[]`                                 |
+| `extraVolumeMounts`                  | list    | Container volume mounts                                | `[]`                                 |
+| `extraVolumes`                       | list    | Container volumes                                      | `[]`                                 |
+| `annotations`                        | object  | Annotations to add to the Deployment                   | `{}`                                 |
+| `labels`                             | object  | Labels to add to the Deployment                        | `{}`                                 |
 
 
 ### Service parameters
