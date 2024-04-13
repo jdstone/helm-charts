@@ -51,7 +51,7 @@ spec:
       {{- if .Values.collectorDefFiles }}
         - name: collectors-config
           configMap:
-            name: {{ print (include "jds-common.names.fullname" .) "-collectors" }}
+            name: {{ include "jds-common.names.fullname" . }}-collectors
       {{- end }}
           {{- with .Values.extraVolumes }}
             {{- toYaml . | nindent 8 }}
