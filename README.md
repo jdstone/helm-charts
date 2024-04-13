@@ -1,13 +1,11 @@
 # J.D. Stone's Helm Charts Repo
 
-Example project to demo testing and hosting a chart repository with GitHub Pages and Actions.
-
 ## How to Use My Charts
 
 * Add this repository to your Helm:
 ```helm repo add jdstone https://charts.jdstone.dev```
 * Install the chart with the values of your choice using the values.yaml file:
-```helm install my-sql-exporter -f values.yaml```
+```helm install -f values.yaml sql-exporter```
 
 ## Actions Used
 
