@@ -1,5 +1,7 @@
 # J.D. Stone's Helm Charts Repo
 
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/jdstone)](https://artifacthub.io/packages/search?repo=jdstone)
+
 ## How to Use My Charts
 
 * Add this repository to your Helm:
