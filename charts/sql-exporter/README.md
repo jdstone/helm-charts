@@ -65,23 +65,24 @@ Create an [issue](https://github.com/jdstone/helm-charts/issues) and I'll do the
 
 ### SQL Exporter configuration parameters
 
-| Name                           | Type    | Description                                                                           | Default                                 |
-| ------------------------------ | ------- | ------------------------------------------------------------------------------------- | --------------------------------------- |
-| `config.createK8sSecretConfig` | boolean | Create a K8s Secret or ConfigMap for the app config. True = Secret, False = ConfigMap | `true`                                  |
-| `config.scrapeTimeout`         | string  | Per-scrape timeout. See values.yaml for more information.                             | `"10s"`                                 |
-| `config.scrapeTimeoutOffset`   | string  | Subtracted from scrapeTimeout to give headroom & prevent Prometheus from timing out   | `"500ms"`                               |
-| `config.minInterval`           | string  | Minimum interval between collector runs                                               | `"0s"`                                  |
-| `config.maxConnections`        | int     | Maximum number of open connections to any one target                                  | `3`                                     |
-| `config.maxIdleConnections`    | int     | Maximum number of idle connections to any one target                                  | `3`                                     |
-| `config.maxConnectionLifetime` | string  | Maximum amount of time a connection may be reused to any one target. See values.yaml. | `infinite`                              |
-| `config.dataSourceName`        | string  | Database Source Name (DSN). See values.yaml for more information.                     | `"sqlserver://user:pass@dbserver:1433"` |
-| `config.awsSecretName`         | string  | Allows the ability to store the DSN in AWS Secrets Manager                            | `""`                                    |
-| `config.collectorNames`        | list    | Collectors (referenced by name) to execute on the target                              | `["pricing_data_freshness"]`            |
-| `config.collectorFiles`        | list    | Collector Files are filenames that sql-exporter will look for and load                | `["*.collector.yml"]`                   |
-| `config.annotations`           | object  | Annotations to add to the Secret or ConfigMap                                         | `{}`                                    |
-| `config.labels`                | object  | Labels to add to the Secret or ConfigMap                                              | `{}`                                    |
-| `collectorDefs`                | string  | Collector definitions. See values.yaml for more info.                                 | `"pricing_data_freshness"`              |
-| `collectorDefFiles`            | list    | Collector definitions, contained in individual files.                                 | `[]`                                    |
+| Name                             | Type    | Description                                                                           | Default                                 |
+| -------------------------------- | ------- | ------------------------------------------------------------------------------------- | --------------------------------------- |
+| `config.createK8sSecretConfig`   | boolean | Create a K8s Secret or ConfigMap for the app config. True = Secret, False = ConfigMap | `true`                                  |
+| `config.scrapeTimeout`           | string  | Per-scrape timeout. See values.yaml for more information.                             | `"10s"`                                 |
+| `config.scrapeTimeoutOffset`     | string  | Subtracted from scrapeTimeout to give headroom & prevent Prometheus from timing out   | `"500ms"`                               |
+| `config.scrapeErrorDropInterval` | string  | Interval between dropping scrape_errors_total metric.                                 | `"0s"`                                  |
+| `config.minInterval`             | string  | Minimum interval between collector runs                                               | `"0s"`                                  |
+| `config.maxConnections`          | int     | Maximum number of open connections to any one target                                  | `3`                                     |
+| `config.maxIdleConnections`      | int     | Maximum number of idle connections to any one target                                  | `3`                                     |
+| `config.maxConnectionLifetime`   | string  | Maximum amount of time a connection may be reused to any one target. See values.yaml. | `infinite`                              |
+| `config.dataSourceName`          | string  | Database Source Name (DSN). See values.yaml for more information.                     | `"sqlserver://user:pass@dbserver:1433"` |
+| `config.awsSecretName`           | string  | Allows the ability to store the DSN in AWS Secrets Manager                            | `""`                                    |
+| `config.collectorNames`          | list    | Collectors (referenced by name) to execute on the target                              | `["pricing_data_freshness"]`            |
+| `config.collectorFiles`          | list    | Collector Files are filenames that sql-exporter will look for and load                | `["*.collector.yml"]`                   |
+| `config.annotations`             | object  | Annotations to add to the Secret or ConfigMap                                         | `{}`                                    |
+| `config.labels`                  | object  | Labels to add to the Secret or ConfigMap                                              | `{}`                                    |
+| `collectorDefs`                  | string  | Collector definitions. See values.yaml for more info.                                 | `"pricing_data_freshness"`              |
+| `collectorDefFiles`              | list    | Collector definitions, contained in individual files.                                 | `[]`                                    |
 
 
 ### Deployment parameters

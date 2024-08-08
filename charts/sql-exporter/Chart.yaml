@@ -19,7 +19,7 @@ keywords:
 - jdstone
 maintainers:
 - email: jdstone1+helm@gmail.com
-  name: JD Stone
+  name: jdstone
   url: https://jdstone.dev
 name: sql-exporter
 sources:
