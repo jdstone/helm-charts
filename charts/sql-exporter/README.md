@@ -6,7 +6,7 @@
 
 ```bash
 $ helm repo add jdstone https://charts.jdstone.dev
-$ helm install my-release jdstone/sql-exporter
+$ helm install sql-exporter jdstone/sql-exporter
 ```
 
 ## Introduction
@@ -20,10 +20,10 @@ This chart bootstraps a SQL Exporter deployment on a [Kubernetes](http://kuberne
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release` and use your values:
+To install the chart with the release name `sql-exporter` and use your values:
 
 ```bash
-$ helm install -f values.yaml my-release jdstone/sql-exporter
+$ helm install -f values.yaml sql-exporter jdstone/sql-exporter
 ```
 
 The command deploys SQL Exporter on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -32,16 +32,16 @@ The command deploys SQL Exporter on the Kubernetes cluster in the default config
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `my-release` deployment:
+To uninstall/delete the `sql-exporter` deployment:
 
 ```bash
-$ helm uninstall my-release
+$ helm uninstall sql-exporter
 ```
 
 > NOTE: If you used `-n namespace` when you installed the chart, be sure to use it again when you uninstall the chart, otherwise the associated dependency Kubernetes resources will not be deleted:
 
 ```bash
-$ helm uninstall -n namespace my-release
+$ helm uninstall -n namespace sql-exporter
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -65,23 +65,24 @@ Create an [issue](https://github.com/jdstone/helm-charts/issues) and I'll do the
 
 ### SQL Exporter configuration parameters
 
-| Name                           | Type    | Description                                                                           | Default                                 |
-| ------------------------------ | ------- | ------------------------------------------------------------------------------------- | --------------------------------------- |
-| `config.createK8sSecretConfig` | boolean | Create a K8s Secret or ConfigMap for the app config. True = Secret, False = ConfigMap | `true`                                  |
-| `config.scrapeTimeout`         | string  | Per-scrape timeout. See values.yaml for more information.                             | `"10s"`                                 |
-| `config.scrapeTimeoutOffset`   | string  | Subtracted from scrapeTimeout to give headroom & prevent Prometheus from timing out   | `"500ms"`                               |
-| `config.minInterval`           | string  | Minimum interval between collector runs                                               | `"0s"`                                  |
-| `config.maxConnections`        | int     | Maximum number of open connections to any one target                                  | `3`                                     |
-| `config.maxIdleConnections`    | int     | Maximum number of idle connections to any one target                                  | `3`                                     |
-| `config.maxConnectionLifetime` | string  | Maximum amount of time a connection may be reused to any one target. See values.yaml. | `infinite`                              |
-| `config.dataSourceName`        | string  | Database Source Name (DSN). See values.yaml for more information.                     | `"sqlserver://user:pass@dbserver:1433"` |
-| `config.awsSecretName`         | string  | Allows the ability to store the DSN in AWS Secrets Manager                            | `""`                                    |
-| `config.collectorNames`        | list    | Collectors (referenced by name) to execute on the target                              | `["pricing_data_freshness"]`            |
-| `config.collectorFiles`        | list    | Collector Files are filenames that sql-exporter will look for and load                | `["*.collector.yml"]`                   |
-| `config.annotations`           | object  | Annotations to add to the Secret or ConfigMap                                         | `{}`                                    |
-| `config.labels`                | object  | Labels to add to the Secret or ConfigMap                                              | `{}`                                    |
-| `collectorDefs`                | string  | Collector definitions. See values.yaml for more info.                                 | `"pricing_data_freshness"`              |
-| `collectorDefFiles`            | list    | Collector definitions, contained in individual files.                                 | `[]`                                    |
+| Name                             | Type    | Description                                                                           | Default                                 |
+| -------------------------------- | ------- | ------------------------------------------------------------------------------------- | --------------------------------------- |
+| `config.createK8sSecretConfig`   | boolean | Create a K8s Secret or ConfigMap for the app config. True = Secret, False = ConfigMap | `true`                                  |
+| `config.scrapeTimeout`           | string  | Per-scrape timeout. See values.yaml for more information.                             | `"10s"`                                 |
+| `config.scrapeTimeoutOffset`     | string  | Subtracted from scrapeTimeout to give headroom & prevent Prometheus from timing out   | `"500ms"`                               |
+| `config.scrapeErrorDropInterval` | string  | Interval between dropping scrape_errors_total metric.                                 | `"0s"`                                  |
+| `config.minInterval`             | string  | Minimum interval between collector runs                                               | `"0s"`                                  |
+| `config.maxConnections`          | int     | Maximum number of open connections to any one target                                  | `3`                                     |
+| `config.maxIdleConnections`      | int     | Maximum number of idle connections to any one target                                  | `3`                                     |
+| `config.maxConnectionLifetime`   | string  | Maximum amount of time a connection may be reused to any one target. See values.yaml. | `infinite`                              |
+| `config.dataSourceName`          | string  | Database Source Name (DSN). See values.yaml for more information.                     | `"sqlserver://user:pass@dbserver:1433"` |
+| `config.awsSecretName`           | string  | Allows the ability to store the DSN in AWS Secrets Manager                            | `""`                                    |
+| `config.collectorNames`          | list    | Collectors (referenced by name) to execute on the target                              | `["pricing_data_freshness"]`            |
+| `config.collectorFiles`          | list    | Collector Files are filenames that sql-exporter will look for and load                | `["*.collector.yml"]`                   |
+| `config.annotations`             | object  | Annotations to add to the Secret or ConfigMap                                         | `{}`                                    |
+| `config.labels`                  | object  | Labels to add to the Secret or ConfigMap                                              | `{}`                                    |
+| `collectorDefs`                  | string  | Collector definitions. See values.yaml for more info.                                 | `"pricing_data_freshness"`              |
+| `collectorDefFiles`              | list    | Collector definitions, contained in individual files.                                 | `[]`                                    |
 
 
 ### Deployment parameters

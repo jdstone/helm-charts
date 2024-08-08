@@ -50,6 +50,12 @@ config:
   ##
   scrapeTimeoutOffset: 500ms
 
+  ## @param {string} config.scrapeErrorDropInterval
+  ## Interval between dropping scrape_errors_total metric.
+  ## Defaults to 0s - metrics are persistent.
+  ##
+  scrapeErrorDropInterval: 0s
+
   ## @param {string} config.minInterval
   ## Minimum interval between collector runs.
   ## Defaults to 0s, collectors are executed on every scrape.
