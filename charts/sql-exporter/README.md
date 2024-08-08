@@ -6,7 +6,7 @@
 
 ```bash
 $ helm repo add jdstone https://charts.jdstone.dev
-$ helm install my-release jdstone/sql-exporter
+$ helm install sql-exporter jdstone/sql-exporter
 ```
 
 ## Introduction
@@ -20,10 +20,10 @@ This chart bootstraps a SQL Exporter deployment on a [Kubernetes](http://kuberne
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release` and use your values:
+To install the chart with the release name `sql-exporter` and use your values:
 
 ```bash
-$ helm install -f values.yaml my-release jdstone/sql-exporter
+$ helm install -f values.yaml sql-exporter jdstone/sql-exporter
 ```
 
 The command deploys SQL Exporter on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -32,16 +32,16 @@ The command deploys SQL Exporter on the Kubernetes cluster in the default config
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `my-release` deployment:
+To uninstall/delete the `sql-exporter` deployment:
 
 ```bash
-$ helm uninstall my-release
+$ helm uninstall sql-exporter
 ```
 
 > NOTE: If you used `-n namespace` when you installed the chart, be sure to use it again when you uninstall the chart, otherwise the associated dependency Kubernetes resources will not be deleted:
 
 ```bash
-$ helm uninstall -n namespace my-release
+$ helm uninstall -n namespace sql-exporter
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
