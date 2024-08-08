@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: 0.14.2
+appVersion: 0.15.0
 dependencies:
 - name: jds-common
   repository: https://charts.jdstone.dev
@@ -19,9 +19,10 @@ keywords:
 - jdstone
 maintainers:
 - email: jdstone1+helm@gmail.com
-  name: jdstone
+  name: JD Stone
+  url: https://jdstone.dev
 name: sql-exporter
 sources:
 - https://github.com/burningalchemist/sql_exporter
 type: application
-version: 0.1.1
+version: 0.2.0
