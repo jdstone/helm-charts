@@ -100,16 +100,16 @@ Create an [issue](https://github.com/jdstone/helm-charts/issues) and I'll do the
 | `resources.limits`                   | object  | CPU/memory resource limits                             | `{}`                                 |
 | `livenessProbe.enabled`              | boolean | Enable/Disable the default http livenessProbe          | `true`                               |
 | `livenessProbe.port`                 | int     | Default livenessProbe http port                        | `nil`                                |
-| `livenessProbe.initialDelaySeconds`  | int     | Initial delay seconds for livenessProbe                | `30`                                 |
+| `livenessProbe.initialDelaySeconds`  | int     | Initial delay seconds for livenessProbe                | `5`                                 |
 | `livenessProbe.periodSeconds`        | int     | Period seconds for livenessProbe                       | `nil`                                |
-| `livenessProbe.timeoutSeconds`       | int     | Timeout seconds for livenessProbe                      | `nil`                                |
+| `livenessProbe.timeoutSeconds`       | int     | Timeout seconds for livenessProbe                      | `30`                                |
 | `livenessProbe.successThreshold`     | int     | Success threshold for livenessProbe                    | `nil`                                |
 | `livenessProbe.failureThreshold`     | int     | Failure threshold for livenessProbe                    | `nil`                                |
 | `readinessProbe.enabled`             | boolean | Enable/Disable the default http readinessProbe         | `true`                               |
 | `readinessProbe.port`                | int     | Default readinessProbe http port                       | `nil`                                |
-| `readinessProbe.initialDelaySeconds` | int     | Initial delay seconds for readinessProbe               | `30`                                 |
+| `readinessProbe.initialDelaySeconds` | int     | Initial delay seconds for readinessProbe               | `5`                                 |
 | `readinessProbe.periodSeconds`       | int     | Period seconds for readinessProbe                      | `nil`                                |
-| `readinessProbe.timeoutSeconds`      | int     | Timeout seconds for readinessProbe                     | `nil`                                |
+| `readinessProbe.timeoutSeconds`      | int     | Timeout seconds for readinessProbe                     | `30`                                |
 | `readinessProbe.successThreshold`    | int     | Success threshold for readinessProbe                   | `nil`                                |
 | `readinessProbe.failureThreshold`    | int     | Failure threshold for readinessProbe                   | `nil`                                |
 | `customLivenessProbe`                | object  | Custom livenessProbe that overrides the default probe  | `{}`                                 |
