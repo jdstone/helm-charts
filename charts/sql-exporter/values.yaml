@@ -191,9 +191,9 @@ resources:
 ##
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 30
+  initialDelaySeconds: 5
   periodSeconds:
-  timeoutSeconds:
+  timeoutSeconds: 30
   successThreshold:
   failureThreshold:
 
@@ -212,9 +212,9 @@ customLivenessProbe: {}
 ##
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 30
+  initialDelaySeconds: 5
   periodSeconds:
-  timeoutSeconds:
+  timeoutSeconds: 30
   successThreshold:
   failureThreshold:
 
