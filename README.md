@@ -1,4 +1,4 @@
-# J.D. Stone's Helm Charts Repo
+# JD Stone's Helm Charts Repo
 
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/jdstone)](https://artifacthub.io/packages/search?repo=jdstone)
 [![Lint and Test Charts](https://github.com/jdstone/helm-charts/actions/workflows/lint-test.yaml/badge.svg)](https://github.com/jdstone/helm-charts/actions/workflows/lint-test.yaml)
