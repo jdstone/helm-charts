@@ -41,7 +41,7 @@ jobs:
           helm repo add jdstone https://charts.jdstone.dev
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
+        uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: charts
           config: cr.yaml
